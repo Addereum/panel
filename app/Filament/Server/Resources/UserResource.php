@@ -99,7 +99,6 @@ class UserResource extends Resource
                     ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
                         $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
-
                     }),
                 EditAction::make()
                     ->label('Edit User')
@@ -443,9 +442,9 @@ class UserResource extends Resource
                                                             ->bulkToggleable()
                                                             ->label('')
                                                             ->options([
-                                                                'rename' => 'Rename',
-                                                                'reinstall' => 'Reinstall',
-                                                                'activity' => 'Activity',
+                                                                'rename' => 'Umbenennen',
+                                                                'reinstall' => 'Neuinstallieren',
+                                                                'activity' => 'Aktivität',
                                                             ])
                                                             ->descriptions([
                                                                 'rename' => trans('server/users.permissions.setting_rename'),

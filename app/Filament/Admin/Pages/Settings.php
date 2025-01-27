@@ -91,7 +91,7 @@ class Settings extends Page implements HasForms
                         ->icon('tabler-brand-oauth')
                         ->schema($this->oauthSettings()),
                     Tab::make('misc')
-                        ->label('Misc')
+                        ->label('Sonstiges')
                         ->icon('tabler-tool')
                         ->schema($this->miscSettings()),
                 ]),
@@ -102,7 +102,7 @@ class Settings extends Page implements HasForms
     {
         return [
             TextInput::make('APP_NAME')
-                ->label('App Name')
+                ->label('Name der App')
                 ->required()
                 ->default(env('APP_NAME', 'Pelican')),
             TextInput::make('APP_FAVICON')
@@ -132,42 +132,42 @@ class Settings extends Page implements HasForms
                 ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
                 ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
-                ->label('Unit prefix')
+                ->label('Einheitenpräfix')
                 ->inline()
                 ->options([
-                    false => 'Decimal Prefix (MB/ GB)',
-                    true => 'Binary Prefix (MiB/ GiB)',
+                    false => 'Dezimalpräfix (MB/ GB)',
+                    true => 'Binärpräfix (MiB/ GiB)',
                 ])
                 ->formatStateUsing(fn ($state): bool => (bool) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_USE_BINARY_PREFIX', (bool) $state))
                 ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
             ToggleButtons::make('APP_2FA_REQUIRED')
-                ->label('2FA Requirement')
+                ->label('2FA-Anforderung')
                 ->inline()
                 ->options([
-                    0 => 'Not required',
-                    1 => 'Required for only Admins',
-                    2 => 'Required for all Users',
+                    0 => 'Nicht erforderlich',
+                    1 => 'Erforderlich für Administratoren',
+                    2 => 'Erforderlich für alle Benutzer',
                 ])
                 ->formatStateUsing(fn ($state): int => (int) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('APP_2FA_REQUIRED', (int) $state))
                 ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
             TagsInput::make('TRUSTED_PROXIES')
-                ->label('Trusted Proxies')
+                ->label('Vertrauenswürdige Proxys')
                 ->separator()
                 ->splitKeys(['Tab', ' '])
-                ->placeholder('New IP or IP Range')
+                ->placeholder('Neue IP oder IP-Bereich')
                 ->default(env('TRUSTED_PROXIES', implode(',', config('trustedproxy.proxies'))))
                 ->hintActions([
                     FormAction::make('clear')
-                        ->label('Clear')
+                        ->label('Löschen')
                         ->color('danger')
                         ->icon('tabler-trash')
                         ->requiresConfirmation()
                         ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
                     FormAction::make('cloudflare')
-                        ->label('Set to Cloudflare IPs')
+                        ->label('Auf Cloudflare IPs einstellen')
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(function (Factory $client, Set $set) {
@@ -193,7 +193,7 @@ class Settings extends Page implements HasForms
                         }),
                 ]),
             Select::make('FILAMENT_WIDTH')
-                ->label('Display Width')
+                ->label('Anzeigebreite')
                 ->native(false)
                 ->options(MaxWidth::class)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
@@ -204,7 +204,7 @@ class Settings extends Page implements HasForms
     {
         return [
             Toggle::make('TURNSTILE_ENABLED')
-                ->label('Enable Turnstile Captcha?')
+                ->label('Turnstile Captcha aktivieren?')
                 ->inline(false)
                 ->columnSpan(1)
                 ->onIcon('tabler-check')
@@ -231,7 +231,7 @@ class Settings extends Page implements HasForms
                 ->default(env('TURNSTILE_SECRET_KEY', config('turnstile.secret_key')))
                 ->placeholder('1x0000000000000000000000000000000AA'),
             Toggle::make('TURNSTILE_VERIFY_DOMAIN')
-                ->label('Verify domain?')
+                ->label('Verifiziere Domain?')
                 ->inline(false)
                 ->onIcon('tabler-check')
                 ->offIcon('tabler-x')
@@ -248,7 +248,7 @@ class Settings extends Page implements HasForms
     {
         return [
             ToggleButtons::make('MAIL_MAILER')
-                ->label('Mail Driver')
+                ->label('Mail-Treiber')
                 ->columnSpanFull()
                 ->inline()
                 ->options([
@@ -263,7 +263,7 @@ class Settings extends Page implements HasForms
                 ->default(env('MAIL_MAILER', config('mail.default')))
                 ->hintAction(
                     FormAction::make('test')
-                        ->label('Send Test Mail')
+                        ->label('Test Mail schicken')
                         ->icon('tabler-send')
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
                         ->authorize(fn () => auth()->user()->can('update settings'))
@@ -303,12 +303,12 @@ class Settings extends Page implements HasForms
                                     ->notify(new MailTested(auth()->user()));
 
                                 Notification::make()
-                                    ->title('Test Mail sent')
+                                    ->title('Test Mail gesendet')
                                     ->success()
                                     ->send();
                             } catch (Exception $exception) {
                                 Notification::make()
-                                    ->title('Test Mail failed')
+                                    ->title('Test Mail gescheitert')
                                     ->body($exception->getMessage())
                                     ->danger()
                                     ->send();
@@ -318,16 +318,16 @@ class Settings extends Page implements HasForms
                         })
                 ),
             Section::make('"From" Settings')
-                ->description('Set the Address and Name used as "From" in mails.')
+                ->description('Legen Sie die Adresse und den Namen fest, die als "Von" in E-Mails verwendet werden.')
                 ->columns()
                 ->schema([
                     TextInput::make('MAIL_FROM_ADDRESS')
-                        ->label('From Address')
+                        ->label('Von Adresse')
                         ->required()
                         ->email()
                         ->default(env('MAIL_FROM_ADDRESS', config('mail.from.address'))),
                     TextInput::make('MAIL_FROM_NAME')
-                        ->label('From Name')
+                        ->label('Von Name')
                         ->required()
                         ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
                 ]),
@@ -347,15 +347,15 @@ class Settings extends Page implements HasForms
                         ->maxValue(65535)
                         ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
                     TextInput::make('MAIL_USERNAME')
-                        ->label('Username')
+                        ->label('Benutzername')
                         ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
                     TextInput::make('MAIL_PASSWORD')
-                        ->label('Password')
+                        ->label('Passwort')
                         ->password()
                         ->revealable()
                         ->default(env('MAIL_PASSWORD')),
                     ToggleButtons::make('MAIL_ENCRYPTION')
-                        ->label('Encryption')
+                        ->label('Verschlüsselung')
                         ->inline()
                         ->options([
                             'tls' => 'TLS',
@@ -373,7 +373,7 @@ class Settings extends Page implements HasForms
                             $set('MAIL_PORT', $port);
                         }),
                 ]),
-            Section::make('Mailgun Configuration')
+            Section::make('Mailgun Konfiguration')
                 ->columns()
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
                 ->schema([
@@ -397,7 +397,7 @@ class Settings extends Page implements HasForms
     {
         return [
             ToggleButtons::make('APP_BACKUP_DRIVER')
-                ->label('Backup Driver')
+                ->label('Backup-Treiber')
                 ->columnSpanFull()
                 ->inline()
                 ->options([
@@ -407,7 +407,7 @@ class Settings extends Page implements HasForms
                 ->live()
                 ->default(env('APP_BACKUP_DRIVER', config('backups.default'))),
             Section::make('Throttles')
-                ->description('Configure how many backups can be created in a period. Set period to 0 to disable this throttle.')
+                ->description('Konfigurieren Sie, wie viele Backups in einem Zeitraum erstellt werden können. Setzen Sie den Zeitraum auf 0, um diese Begrenzung zu deaktivieren.')
                 ->columns()
                 ->schema([
                     TextInput::make('BACKUP_THROTTLE_LIMIT')
@@ -417,7 +417,7 @@ class Settings extends Page implements HasForms
                         ->minValue(1)
                         ->default(config('backups.throttles.limit')),
                     TextInput::make('BACKUP_THROTTLE_PERIOD')
-                        ->label('Period')
+                        ->label('Zeitraum')
                         ->required()
                         ->numeric()
                         ->minValue(0)
@@ -429,15 +429,15 @@ class Settings extends Page implements HasForms
                 ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
                 ->schema([
                     TextInput::make('AWS_DEFAULT_REGION')
-                        ->label('Default Region')
+                        ->label('Standardregion')
                         ->required()
                         ->default(config('backups.disks.s3.region')),
                     TextInput::make('AWS_ACCESS_KEY_ID')
-                        ->label('Access Key ID')
+                        ->label('Zugriffsschlüssel-ID')
                         ->required()
                         ->default(config('backups.disks.s3.key')),
                     TextInput::make('AWS_SECRET_ACCESS_KEY')
-                        ->label('Secret Access Key')
+                        ->label('Geheimer Zugriffsschlüssel')
                         ->required()
                         ->default(config('backups.disks.s3.secret')),
                     TextInput::make('AWS_BACKUPS_BUCKET')
@@ -445,11 +445,11 @@ class Settings extends Page implements HasForms
                         ->required()
                         ->default(config('backups.disks.s3.bucket')),
                     TextInput::make('AWS_ENDPOINT')
-                        ->label('Endpoint')
+                        ->label('Endpunkt')
                         ->required()
                         ->default(config('backups.disks.s3.endpoint')),
                     Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
-                        ->label('Use path style endpoint?')
+                        ->label('Pfadstil-Endpunkt verwenden?')
                         ->inline(false)
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
@@ -522,14 +522,14 @@ class Settings extends Page implements HasForms
     private function miscSettings(): array
     {
         return [
-            Section::make('Automatic Allocation Creation')
-                ->description('Toggle if Users can create allocations via the client area.')
+            Section::make('Automatische Zuordnungserstellung')
+                ->description('Aktivieren oder deaktivieren Sie, ob Benutzer Zuordnungen über den Kundenbereich erstellen können.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()
                 ->schema([
                     Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
-                        ->label('Allow Users to create allocations?')
+                        ->label('Benutzern das Erstellen von Zuordnungen erlauben?')
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
                         ->onColor('success')
@@ -540,7 +540,7 @@ class Settings extends Page implements HasForms
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_CLIENT_ALLOCATIONS_ENABLED', (bool) $state))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
-                        ->label('Starting Port')
+                        ->label('Start-Port')
                         ->required()
                         ->numeric()
                         ->minValue(1024)
@@ -548,7 +548,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
-                        ->label('Ending Port')
+                        ->label('End-Port')
                         ->required()
                         ->numeric()
                         ->minValue(1024)
@@ -556,14 +556,14 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_END')),
                 ]),
-            Section::make('Mail Notifications')
-                ->description('Toggle which mail notifications should be sent to Users.')
+            Section::make('E-Mail-Benachrichtigungen')
+                ->description('Legen Sie fest, welche E-Mail-Benachrichtigungen an Benutzer gesendet werden sollen.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()
                 ->schema([
                     Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
-                        ->label('Server Installed')
+                        ->label('Server installiert')
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
                         ->onColor('success')
@@ -574,7 +574,7 @@ class Settings extends Page implements HasForms
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
                     Toggle::make('PANEL_SEND_REINSTALL_NOTIFICATION')
-                        ->label('Server Reinstalled')
+                        ->label('Server neu installiert')
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
                         ->onColor('success')
@@ -585,45 +585,46 @@ class Settings extends Page implements HasForms
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
                 ]),
-            Section::make('Connections')
-                ->description('Timeouts used when making requests.')
+
+            Section::make('Verbindungen')
+                ->description('Zeitüberschreitungen für Anfragen.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()
                 ->schema([
                     TextInput::make('GUZZLE_TIMEOUT')
-                        ->label('Request Timeout')
+                        ->label('Anfrage-Timeout')
                         ->required()
                         ->numeric()
                         ->minValue(15)
                         ->maxValue(60)
-                        ->suffix('Seconds')
+                        ->suffix('Sekunden')
                         ->default(env('GUZZLE_TIMEOUT', config('panel.guzzle.timeout'))),
                     TextInput::make('GUZZLE_CONNECT_TIMEOUT')
-                        ->label('Connect Timeout')
+                        ->label('Verbindungs-Timeout')
                         ->required()
                         ->numeric()
                         ->minValue(5)
                         ->maxValue(60)
-                        ->suffix('Seconds')
+                        ->suffix('Sekunden')
                         ->default(env('GUZZLE_CONNECT_TIMEOUT', config('panel.guzzle.connect_timeout'))),
                 ]),
-            Section::make('Activity Logs')
-                ->description('Configure how often old activity logs should be pruned and whether admin activities should be logged.')
+            Section::make('Aktivitätsprotokolle')
+                ->description('Legen Sie fest, wie oft alte Aktivitätsprotokolle bereinigt werden sollen und ob Administratoraktivitäten protokolliert werden sollen.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()
                 ->schema([
                     TextInput::make('APP_ACTIVITY_PRUNE_DAYS')
-                        ->label('Prune age')
+                        ->label('Bereinigungsalter')
                         ->required()
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(365)
-                        ->suffix('Days')
+                        ->suffix('Tage')
                         ->default(env('APP_ACTIVITY_PRUNE_DAYS', config('activity.prune_days'))),
                     Toggle::make('APP_ACTIVITY_HIDE_ADMIN')
-                        ->label('Hide admin activities?')
+                        ->label('Admin-Aktivitäten ausblenden?')
                         ->inline(false)
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
@@ -635,34 +636,34 @@ class Settings extends Page implements HasForms
                         ->default(env('APP_ACTIVITY_HIDE_ADMIN', config('activity.hide_admin_activity'))),
                 ]),
             Section::make('API')
-                ->description('Defines the rate limit for the number of requests per minute that can be executed.')
+                ->description('Legt das Ratenlimit für die Anzahl der Anfragen pro Minute fest.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()
                 ->schema([
                     TextInput::make('APP_API_CLIENT_RATELIMIT')
-                        ->label('Client API Rate Limit')
+                        ->label('API-Ratenlimit für Clients')
                         ->required()
                         ->numeric()
                         ->minValue(1)
-                        ->suffix('Requests Per Minute')
+                        ->suffix('Anfragen pro Minute')
                         ->default(env('APP_API_CLIENT_RATELIMIT', config('http.rate_limit.client'))),
                     TextInput::make('APP_API_APPLICATION_RATELIMIT')
-                        ->label('Application API Rate Limit')
+                        ->label('API-Ratenlimit für Anwendungen')
                         ->required()
                         ->numeric()
                         ->minValue(1)
-                        ->suffix('Requests Per Minute')
+                        ->suffix('Anfragen pro Minute')
                         ->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
                 ]),
             Section::make('Server')
-                ->description('Settings for Servers.')
+                ->description('Einstellungen für Server.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()
                 ->schema([
                     Toggle::make('PANEL_EDITABLE_SERVER_DESCRIPTIONS')
-                        ->label('Allow Users to edit Server Descriptions?')
+                        ->label('Benutzern erlauben, Serverbeschreibungen zu bearbeiten?')
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
                         ->onColor('success')
@@ -674,18 +675,18 @@ class Settings extends Page implements HasForms
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                 ]),
             Section::make('Webhook')
-                ->description('Configure how often old webhook logs should be pruned.')
+                ->description('Legen Sie fest, wie oft alte Webhook-Protokolle bereinigt werden sollen.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()
                 ->schema([
                     TextInput::make('APP_WEBHOOK_PRUNE_DAYS')
-                        ->label('Prune age')
+                        ->label('Bereinigungsalter')
                         ->required()
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(365)
-                        ->suffix('Days')
+                        ->suffix('Tage')
                         ->default(env('APP_WEBHOOK_PRUNE_DAYS', config('panel.webhook.prune_days'))),
                 ]),
         ];
@@ -732,6 +733,5 @@ class Settings extends Page implements HasForms
                 ->authorize(fn () => auth()->user()->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];
-
     }
 }

@@ -62,7 +62,7 @@ class Settings extends ServerFormPage
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                 Textarea::make('description')
-                                    ->label('Server Description')
+                                    ->label('Server Beschreibung')
                                     ->hidden(!config('panel.editable_server_descriptions'))
                                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->columnSpan([

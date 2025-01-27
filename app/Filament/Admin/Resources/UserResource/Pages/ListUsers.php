@@ -47,7 +47,7 @@ class ListUsers extends ListRecords
                     ->boolean()
                     ->sortable(),
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label('Rollen')
                     ->badge()
                     ->icon('tabler-users-group')
                     ->placeholder('No roles'),
@@ -57,7 +57,7 @@ class ListUsers extends ListRecords
                     ->label('Servers'),
                 TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
-                    ->label('Subusers')
+                    ->label('Unterbenutzer')
                     ->counts('subusers')
                     ->icon('tabler-users'),
             ])
@@ -77,7 +77,7 @@ class ListUsers extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create User'),
+                ->label('Benutzer erstellen'),
         ];
     }
 }

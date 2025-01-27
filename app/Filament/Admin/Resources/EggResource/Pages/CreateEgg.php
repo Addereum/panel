@@ -114,7 +114,7 @@ class CreateEgg extends CreateRecord
                         ->schema([
                             Hidden::make('config_from')
                                 ->default(null)
-                                ->label('Copy Settings From')
+                                ->label('Einstellungen kopieren von')
                                 // ->placeholder('None')
                                 // ->relationship('configFrom', 'name', ignoreRecord: true)
                                 ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
