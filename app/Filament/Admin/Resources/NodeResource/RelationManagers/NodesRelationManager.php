@@ -20,7 +20,7 @@ class NodesRelationManager extends RelationManager
             ->searchable(false)
             ->columns([
                 TextColumn::make('user.username')
-                    ->label('Owner')
+                    ->label('Besitzer')
                     ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->searchable(),
@@ -34,15 +34,15 @@ class NodesRelationManager extends RelationManager
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->user]))
                     ->sortable(),
                 SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
+                    ->label('Primäre Zuordnung')
                     ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
                     ->sortable(),
-                TextColumn::make('memory')->icon('tabler-device-desktop-analytics'),
-                TextColumn::make('cpu')->icon('tabler-cpu'),
+                TextColumn::make('memory')->icon('tabler-device-desktop-analytics')->label('Arbeitsspeicher'),
+                TextColumn::make('cpu')->icon('tabler-cpu')->label('CPU'),
                 TextColumn::make('databases_count')
                     ->counts('databases')
-                    ->label('Databases')
+                    ->label('Datenbanken')
                     ->icon('tabler-database')
                     ->numeric()
                     ->sortable(),
