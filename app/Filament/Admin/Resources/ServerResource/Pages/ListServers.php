@@ -30,7 +30,7 @@ class ListServers extends ListRecords
                 Group::make('egg.name')->getDescriptionFromRecordUsing(fn (Server $server): string => str($server->egg->description)->limit(150)),
             ])
             ->columns([
-                TextColumn::make('condition')
+                TextColumn::make('Zustand')
                     ->default('unknown')
                     ->badge()
                     ->icon(fn (Server $server) => $server->conditionIcon())
@@ -57,19 +57,19 @@ class ListServers extends ListRecords
                     ->searchable(),
                 TextColumn::make('user.username')
                     ->icon('tabler-user')
-                    ->label('Owner')
+                    ->label('Besitzer')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
                     ->sortable()
                     ->searchable(),
                 SelectColumn::make('allocation_id')
-                    ->label('Primary Allocation')
+                    ->label('Primäre zuweisung')
                     ->hidden(!auth()->user()->can('update server'))
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
-                    ->label('Primary Allocation')
+                    ->label('Primäre zuweisung')
                     ->hidden(auth()->user()->can('update server'))
                     ->state(fn (Server $server) => $server->allocation->address),
                 TextColumn::make('image')->hidden(),
@@ -90,10 +90,10 @@ class ListServers extends ListRecords
             ->emptyStateIcon('tabler-brand-docker')
             ->searchable()
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Servers')
+            ->emptyStateHeading('Keine Server')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Server')
+                    ->label('Server erstellen')
                     ->button(),
             ]);
     }
@@ -102,7 +102,7 @@ class ListServers extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Server')
+                ->label('Server erstellen')
                 ->hidden(fn () => Server::count() <= 0),
         ];
     }

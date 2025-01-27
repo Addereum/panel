@@ -60,10 +60,10 @@ class ListNodes extends ListRecords
             ])
             ->emptyStateIcon('tabler-server-2')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Nodes')
+            ->emptyStateHeading('Keine Nodes')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Node')
+                    ->label('Node erstellen')
                     ->button(),
             ]);
     }
@@ -72,7 +72,7 @@ class ListNodes extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Node')
+                ->label('Node erstellen')
                 ->hidden(fn () => Node::count() <= 0),
         ];
     }

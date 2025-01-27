@@ -109,7 +109,7 @@ class CreateEgg extends CreateRecord
                                 ->helperText('The docker images available to servers using this egg.'),
                         ]),
 
-                    Tab::make('Process Management')
+                    Tab::make('Prozessverwaltung')
                         ->columns()
                         ->schema([
                             Hidden::make('config_from')
@@ -117,31 +117,31 @@ class CreateEgg extends CreateRecord
                                 ->label('Einstellungen kopieren von')
                                 // ->placeholder('None')
                                 // ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
+                                ->helperText('Wähle eine andere Egg-Vorlage aus, um Standardeinstellungen zu übernehmen.'),
                             TextInput::make('config_stop')
                                 ->required()
                                 ->maxLength(255)
-                                ->label('Stop Command')
-                                ->helperText('The command that should be sent to server processes to stop them gracefully. If you need to send a SIGINT you should enter ^C here.'),
+                                ->label('Stopp-Befehl')
+                                ->helperText('Der Befehl, der an Serverprozesse gesendet werden soll, um sie ordnungsgemäß zu stoppen. Wenn du ein SIGINT senden musst, gib hier ^C ein.'),
                             Textarea::make('config_startup')->rows(10)->json()
-                                ->label('Start Configuration')
+                                ->label('Startkonfiguration')
                                 ->default('{}')
-                                ->helperText('List of values the daemon should be looking for when booting a server to determine completion.'),
+                                ->helperText('Liste von Werten, nach denen der Daemon beim Starten eines Servers suchen soll, um den Abschluss zu bestimmen.'),
                             Textarea::make('config_files')->rows(10)->json()
-                                ->label('Configuration Files')
+                                ->label('Konfigurationsdateien')
                                 ->default('{}')
-                                ->helperText('This should be a JSON representation of configuration files to modify and what parts should be changed.'),
+                                ->helperText('Dies sollte eine JSON-Darstellung von Konfigurationsdateien sein, die geändert werden sollen, und welche Teile geändert werden müssen.'),
                             Textarea::make('config_logs')->rows(10)->json()
-                                ->label('Log Configuration')
+                                ->label('Log-Konfiguration')
                                 ->default('{}')
-                                ->helperText('This should be a JSON representation of where log files are stored, and whether or not the daemon should be creating custom logs.'),
+                                ->helperText('Dies sollte eine JSON-Darstellung der Speicherorte von Logdateien und der Konfiguration benutzerdefinierter Logs durch den Daemon sein.'),
                         ]),
-                    Tab::make('Egg Variables')
+                    Tab::make('Egg-Variablen')
                         ->columnSpanFull()
                         ->schema([
                             Repeater::make('variables')
                                 ->label('')
-                                ->addActionLabel('Add New Egg Variable')
+                                ->addActionLabel('Neue Egg-Variable hinzufügen')
                                 ->grid()
                                 ->relationship('variables')
                                 ->name('name')
@@ -177,12 +177,12 @@ class CreateEgg extends CreateRecord
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
                                         ->validationMessages([
-                                            'unique' => 'A variable with this name already exists.',
+                                            'unique' => 'Eine Variable mit diesem Namen existiert bereits.',
                                         ])
                                         ->required(),
-                                    Textarea::make('description')->columnSpanFull(),
+                                    Textarea::make('description')->columnSpanFull()->label('Beschreibung'),
                                     TextInput::make('env_variable')
-                                        ->label('Environment Variable')
+                                        ->label('Umgebungsvariable')
                                         ->maxLength(255)
                                         ->prefix('{{')
                                         ->suffix('}}')
@@ -190,18 +190,18 @@ class CreateEgg extends CreateRecord
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
                                         ->validationMessages([
-                                            'unique' => 'A variable with this name already exists.',
+                                            'unique' => 'Eine Variable mit diesem Namen existiert bereits.',
                                         ])
                                         ->required(),
-                                    TextInput::make('default_value')->maxLength(255),
-                                    Fieldset::make('User Permissions')
+                                    TextInput::make('default_value')->label('Standardwert')->maxLength(255),
+                                    Fieldset::make('Benutzerberechtigungen')
                                         ->schema([
-                                            Checkbox::make('user_viewable')->label('Viewable'),
-                                            Checkbox::make('user_editable')->label('Editable'),
+                                            Checkbox::make('user_viewable')->label('Sichtbar'),
+                                            Checkbox::make('user_editable')->label('Bearbeitbar'),
                                         ]),
                                     TagsInput::make('rules')
                                         ->columnSpanFull()
-                                        ->placeholder('Add Rule')
+                                        ->placeholder('Regel hinzufügen')
                                         ->reorderable()
                                         ->suggestions([
                                             'required',
@@ -225,10 +225,10 @@ class CreateEgg extends CreateRecord
                                         ]),
                                 ]),
                         ]),
-                    Tab::make('Install Script')
+
+                    Tab::make('Installationsskript')
                         ->columns(3)
                         ->schema([
-
                             Hidden::make('copy_script_from'),
                             //->placeholder('None')
                             //->relationship('scriptFrom', 'name', ignoreRecord: true),
@@ -236,21 +236,25 @@ class CreateEgg extends CreateRecord
                             TextInput::make('script_container')
                                 ->required()
                                 ->maxLength(255)
+                                ->label('Skript-Container')
                                 ->default('ghcr.io/pelican-eggs/installers:debian'),
 
                             Select::make('script_entry')
+                                ->label('Skripteintrag')
                                 ->selectablePlaceholder(false)
                                 ->default('bash')
                                 ->options(['bash', 'ash', '/bin/bash'])
                                 ->required(),
 
                             MonacoEditor::make('script_install')
+                                ->label('Installationsskript')
                                 ->columnSpanFull()
                                 ->fontSize('16px')
                                 ->language('shell')
                                 ->lazy()
                                 ->view('filament.plugins.monaco-editor'),
                         ]),
+
 
                 ])->columnSpanFull()->persistTabInQueryString(),
             ]);

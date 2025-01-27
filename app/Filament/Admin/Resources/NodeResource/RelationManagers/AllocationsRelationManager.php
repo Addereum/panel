@@ -77,14 +77,14 @@ class AllocationsRelationManager extends RelationManager
                     ->label('IP'),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('create new allocation')->label('Create Allocations')
+                Tables\Actions\Action::make('create new allocation')->label('Zuordnungen erstellen')
                     ->form(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
-                            ->label('IP Address')
+                            ->label('IP-Adresse')
                             ->inlineLabel()
                             ->ipv4()
-                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                            ->helperText("Normalerweise die öffentliche IP-Adresse deiner Maschine, es sei denn, du verwendest Portweiterleitung.")
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->live()
                             ->required(),
@@ -92,21 +92,24 @@ class AllocationsRelationManager extends RelationManager
                             ->label('Alias')
                             ->inlineLabel()
                             ->default(null)
-                            ->helperText('Optional display name to help you remember what these are.')
+                            ->helperText('Optionale Anzeige zur besseren Identifikation der Zuordnung.')
                             ->required(false),
                         TagsInput::make('allocation_ports')
-                            ->placeholder('Examples: 27015, 27017-27019')
+                            ->placeholder('Beispiele: 27015, 27017-27019')
                             ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
+                                Dies sind die Ports, über die Benutzer eine Verbindung zu diesem Server herstellen können.
                                 <br />
-                                You would have to port forward these on your home network.
+                                Diese Ports müssen in deinem Heimnetzwerk weitergeleitet werden.
                             '))
                             ->label('Ports')
                             ->inlineLabel()
                             ->live()
                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
-                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
-                                CreateServer::retrieveValidPorts($this->getOwnerRecord(), $state, $get('allocation_ip')))
+                            ->afterStateUpdated(
+                                fn ($state, Set $set, Get $get) => $set(
+                                    'allocation_ports',
+                                    CreateServer::retrieveValidPorts($this->getOwnerRecord(), $state, $get('allocation_ip'))
+                                )
                             )
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),

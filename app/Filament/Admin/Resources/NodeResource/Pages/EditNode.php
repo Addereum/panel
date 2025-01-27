@@ -57,7 +57,7 @@ class EditNode extends EditRecord
                 ->columnSpanFull()
                 ->tabs([
                     Tab::make('')
-                        ->label('Overview')
+                        ->label('Übersicht')
                         ->icon('tabler-chart-area-line-filled')
                         ->columns([
                             'default' => 4,
@@ -168,7 +168,7 @@ class EditNode extends EditRecord
                                 ->hidden(),
                             ToggleButtons::make('dns')
                                 ->label('DNS Record Check')
-                                ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
+                                ->helperText('So können Sie feststellen, ob Ihr DNS-Eintrag korrekt auf eine IP-Adresse verweist.')
                                 ->disabled()
                                 ->inline()
                                 ->default(null)
@@ -186,7 +186,7 @@ class EditNode extends EditRecord
                             TextInput::make('daemon_listen')
                                 ->columnSpan(1)
                                 ->label(trans('strings.port'))
-                                ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
+                                ->helperText('Wenn Sie den Daemon hinter Cloudflare laufen lassen, sollten Sie den Daemon-Port auf 8443 setzen, um Websocket-Proxying über SSL zu ermöglichen.')
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->default(8080)
@@ -201,19 +201,19 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->required()
-                                ->helperText('This name is for display only and can be changed later.')
+                                ->helperText('Dieser Name dient nur zur Anzeige und kann später geändert werden.')
                                 ->maxLength(100),
                             ToggleButtons::make('scheme')
-                                ->label('Communicate over SSL')
+                                ->label('Kommunikation über SSL')
                                 ->columnSpan(1)
                                 ->inline()
                                 ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
-                                        return new HtmlString('Your Panel is using a secure SSL connection,<br>so your Daemon must too.');
+                                        return new HtmlString('Ihr Panel verwendet eine sichere SSL-Verbindung,<br> also muss das auch Ihr Daemon tun.');
                                     }
 
                                     if (is_ip($get('fqdn'))) {
-                                        return 'An IP address cannot use SSL.';
+                                        return 'Eine IP-Adresse kann SSL nicht verwenden.';
                                     }
 
                                     return '';
@@ -231,7 +231,8 @@ class EditNode extends EditRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+                        ]),
                     Tab::make('Advanced Settings')
                         ->columns([
                             'default' => 1,
@@ -303,7 +304,7 @@ class EditNode extends EditRecord
                                     'lg' => 3,
                                 ])
                                 ->label('SFTP Alias')
-                                ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
+                                ->helperText('Alias für die SFTP-Adresse anzeigen. Leer lassen, um den FQDN des Nodes zu verwenden.'),
                             ToggleButtons::make('public')
                                 ->columnSpan([
                                     'default' => 1,
@@ -311,7 +312,7 @@ class EditNode extends EditRecord
                                     'md' => 1,
                                     'lg' => 3,
                                 ])
-                                ->label('Use Node for deployment?')->inline()
+                                ->label('Node fürs Deployment verwenden?')->inline()
                                 ->options([
                                     true => 'Yes',
                                     false => 'No',
@@ -327,12 +328,12 @@ class EditNode extends EditRecord
                                     'md' => 1,
                                     'lg' => 3,
                                 ])
-                                ->label('Maintenance Mode')->inline()
+                                ->label('Wartungsmodus')->inline()
                                 ->hinticon('tabler-question-mark')
-                                ->hintIconTooltip("If the node is marked 'Under Maintenance' users won't be able to access servers that are on this node.")
+                                ->hintIconTooltip("Wenn der Node als 'Unter Wartung' markiert ist, können Benutzer nicht auf Server zugreifen, die sich auf diesem Node befinden.")
                                 ->options([
-                                    false => 'Disable',
-                                    true => 'Enable',
+                                    false => 'Deaktivieren',
+                                    true => 'Aktivieren',
                                 ])
                                 ->colors([
                                     false => 'success',
@@ -348,7 +349,7 @@ class EditNode extends EditRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_mem')
-                                        ->label('Memory')->inlineLabel()->inline()
+                                        ->label('RAM')->inlineLabel()->inline()
                                         ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('memory_overallocate', 0))
                                         ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
@@ -367,10 +368,10 @@ class EditNode extends EditRecord
                                             'md' => 1,
                                             'lg' => 2,
                                         ]),
-                                    TextInput::make('memory')
+                                    TextInput::make('ram')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_mem'))
-                                        ->label('Memory Limit')->inlineLabel()
+                                        ->label('RAM Limit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
                                         ->columnSpan([
@@ -430,7 +431,7 @@ class EditNode extends EditRecord
                                     TextInput::make('disk')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_disk'))
-                                        ->label('Disk Limit')->inlineLabel()
+                                        ->label('Plattenlimit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
                                         ->columnSpan([
@@ -501,14 +502,14 @@ class EditNode extends EditRecord
                                         ->suffix('%'),
                                 ]),
                         ]),
-                    Tab::make('Configuration File')
+                    Tab::make('Konfigurationsdatei')
                         ->icon('tabler-code')
                         ->schema([
                             Placeholder::make('instructions')
                                 ->columnSpanFull()
                                 ->content(new HtmlString('
-                                  Save this file to your <span title="usually /etc/pelican/">daemon\'s root directory</span>, named <code>config.yml</code>
-                            ')),
+                                    Speichere diese Datei im <span title="normalerweise /etc/pelican/">Stammverzeichnis des Daemons</span> unter dem Namen <code>config.yml</code>
+                                ')),
                             Textarea::make('config')
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()
@@ -520,23 +521,23 @@ class EditNode extends EditRecord
                                 ->schema([
                                     FormActions::make([
                                         FormActions\Action::make('autoDeploy')
-                                            ->label('Auto Deploy Command')
+                                            ->label('Automatischer Bereitstellungsbefehl')
                                             ->color('primary')
-                                            ->modalHeading('Auto Deploy Command')
+                                            ->modalHeading('Automatischer Bereitstellungsbefehl')
                                             ->icon('tabler-rocket')
                                             ->modalSubmitAction(false)
                                             ->modalCancelAction(false)
                                             ->modalFooterActionsAlignment(Alignment::Center)
                                             ->form([
                                                 ToggleButtons::make('docker')
-                                                    ->label('Type')
+                                                    ->label('Typ')
                                                     ->live()
-                                                    ->helperText('Choose between Standalone and Docker install.')
+                                                    ->helperText('Wähle zwischen einer eigenständigen Installation und einer Docker-Installation.')
                                                     ->inline()
                                                     ->default(false)
                                                     ->afterStateUpdated(fn (bool $state, NodeAutoDeployService $service, Node $node, Set $set) => $set('generatedToken', $service->handle(request(), $node, $state)))
                                                     ->options([
-                                                        false => 'Standalone',
+                                                        false => 'Eigenständig',
                                                         true => 'Docker',
                                                     ])
                                                     ->colors([
@@ -545,7 +546,7 @@ class EditNode extends EditRecord
                                                     ])
                                                     ->columnSpan(1),
                                                 Textarea::make('generatedToken')
-                                                    ->label('To auto-configure your node run the following command:')
+                                                    ->label('Um deinen Node automatisch zu konfigurieren, führe folgenden Befehl aus:')
                                                     ->readOnly()
                                                     ->autosize()
                                                     ->hintAction(fn (string $state) => CopyAction::make()->copyable($state))
@@ -610,12 +611,13 @@ class EditNode extends EditRecord
             $this->errored = true;
 
             Notification::make()
-                ->title('Error connecting to the node')
-                ->body('The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.')
+                ->title('Fehler beim Herstellen der Verbindung zum Node')
+                ->body('Die Konfiguration konnte nicht automatisch auf Wings aktualisiert werden. Du musst die Konfigurationsdatei manuell aktualisieren.')
                 ->color('warning')
                 ->icon('tabler-database')
                 ->warning()
                 ->send();
+
 
             return parent::handleRecordUpdate($record, $data);
         }
