@@ -259,7 +259,7 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->label('Node UUID')
-                                ->hintAction(CopyAction::make())
+                                ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->columnSpan([
@@ -514,7 +514,7 @@ class EditNode extends EditRecord
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()
                                 ->rows(19)
-                                ->hintAction(CopyAction::make())
+                                ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                 ->columnSpanFull(),
                             Grid::make()
                                 ->columns()
@@ -549,7 +549,7 @@ class EditNode extends EditRecord
                                                     ->label('Um deinen Node automatisch zu konfigurieren, führe folgenden Befehl aus:')
                                                     ->readOnly()
                                                     ->autosize()
-                                                    ->hintAction(fn (string $state) => CopyAction::make()->copyable($state))
+                                                    ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                                     ->formatStateUsing(fn (NodeAutoDeployService $service, Node $node, Set $set, Get $get) => $set('generatedToken', $service->handle(request(), $node, $get('docker')))),
                                             ])
                                             ->mountUsing(function (Forms\Form $form) {
