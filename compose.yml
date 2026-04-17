@@ -30,7 +30,9 @@ x-common:
 services:
   panel:
     image: ghcr.io/pelican-dev/panel:latest
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     networks:
       - default

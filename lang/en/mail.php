@@ -32,4 +32,20 @@ return [
         'subject' => 'Panel Test Message',
         'body' => 'This is a test of the Panel mail system. You\'re good to go!',
     ],
+
+    'backup_completed' => [
+        'subject' => 'Backup Completed',
+        'body' => 'Your backup has completed successfully and is now ready for use or restoration.',
+        'server_name' => 'Server Name: :name',
+        'backup_name' => 'Backup Name: :name',
+        'action' => 'View Backups',
+    ],
+
+    'backup_failed' => [
+        'subject' => 'Backup Failed',
+        'body' => 'Unfortunately, your backup failed to complete.',
+        'server_name' => 'Server Name: :name',
+        'backup_name' => 'Backup Name: :name',
+        'action' => 'View Backups',
+    ],
 ];

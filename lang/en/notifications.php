@@ -6,6 +6,8 @@ return [
     'installation_failed' => 'Server Installation Failed',
     'reinstallation_completed' => 'Server Reinstallation Completed',
     'reinstallation_failed' => 'Server Reinstallation Failed',
+    'backup_completed' => 'Backup Completed',
+    'backup_failed' => 'Backup Failed',
     'failed' => 'Failed',
     'user_added' => [
         'title' => 'Added to Server',

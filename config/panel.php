@@ -48,6 +48,8 @@ return [
         'send_install_notification' => env('PANEL_SEND_INSTALL_NOTIFICATION', true),
         // Should an email be sent to a server owner whenever their server is reinstalled?
         'send_reinstall_notification' => env('PANEL_SEND_REINSTALL_NOTIFICATION', true),
+        // Should an email be sent to a server owner whenever a backup is completed (success or failure)?
+        'send_backup_complete_notification' => env('PANEL_SEND_BACKUP_COMPLETE_NOTIFICATION', true),
     ],
 
     'filament' => [
